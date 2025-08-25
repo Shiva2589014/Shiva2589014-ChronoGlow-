@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stylish Digital Clock</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease-in-out;
+    }
+
+    .clock {
+      text-align: center;
+      padding: 40px 70px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 2s ease;
+    }
+
+    #time {
+      font-size: 95px;
+      font-weight: bold;
+      margin: 0;
+      letter-spacing: 3px;
+      animation: glowPulse 2s infinite alternate;
+    }
+
+    #date {
+      font-size: 26px;
+      margin-top: 12px;
+      animation: fadeSlide 3s infinite alternate;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    /* ---------- ANIMATIONS ---------- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes glowPulse {
+      from { text-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff; }
+      to { text-shadow: 0 0 25px #ff00ff, 0 0 40px #00ffff; }
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0.6; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(-5px); }
+    }
+    @keyframes rainbowText {
+      0% { background-position: 0% }
+      100% { background-position: 200% }
+    }
+
+    /* ---------- THEMES ---------- */
+
+    /* 1. City Night */
+    .city {
+      background-image: url("https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1600&q=80");
+      color: #00f5ff;
+    }
+    .city #time {
+      text-shadow: 0 0 25px #00f5ff;
+    }
+    .city button { background: #00f5ff; color: #000; }
+
+    /* 2. Nature Green */
+    .nature {
+      background-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80");
+      color: #eaffea;
+    }
+    .nature #time {
+      text-shadow: 0 0 20px #00ff88;
+    }
+    .nature button { background: #00ff88; color: #000; }
+
+    /* 3. Luxury Marble (Animated Gold Text) */
+    .marble {
+      background-image: url("https://images.unsplash.com/photo-1606788075761-9a6efb8da7af?auto=format&fit=crop&w=1600&q=80");
+      color: #222;
+    }
+    .marble .clock { background: rgba(255, 255, 255, 0.65); }
+    .marble #time {
+      background: linear-gradient(270deg, #d4af37, #ffdd55, #d4af37);
+      background-size: 200% auto;
+      -webkit-text-fill-color: transparent;
+      animation: rainbowText 4s linear infinite;
+    }
+    .marble button { background: #d4af37; color: #000; }
+
+    /* 4. Galaxy Space */
+    .galaxy {
+      background-image: url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80");
+      color: #fff;
+    }
+    .galaxy #time {
+      text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+    }
+    .galaxy button { background: #ff00ff; color: #fff; }
+  </style>
+</head>
+<body class="city">
+  <div class="clock">
+    <h1 id="time"></h1>
+    <p id="date"></p>
+    <button onclick="changeTheme()">Change Theme</button>
+  </div>
+
+  <script>
+    function updateClock() {
+      let now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+
+      let ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      document.getElementById("time").textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+      document.getElementById("date").textContent = now.toLocaleDateString("en-US", { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+      });
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ---------- Theme Switcher ----------
+    const themes = ["city", "nature", "marble", "galaxy"];
+    let current = 0;
+
+    function changeTheme() {
+      current = (current + 1) % themes.length;
+      document.body.className = themes[current];
+    }
+
+    // ---------- Auto Theme Change every 10s ----------
+    setInterval(() => { changeTheme(); }, 10000);
+
+    // ---------- Auto Day/Night Theme ----------
+    window.onload = () => {
+      let hour = new Date().getHours();
+      if(hour >= 6 && hour < 18) {
+        document.body.className = "nature"; // daytime
+      } else {
+        document.body.className = "city"; // night
+      }
+    };
+  </script>
+</body>
+</html>
